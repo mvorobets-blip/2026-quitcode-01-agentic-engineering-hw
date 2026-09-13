@@ -2,8 +2,59 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 24px;
   min-height: 100vh;
   padding: 32px;
+}
+
+.layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.board {
+  position: relative;
+  display: grid;
+  gap: 1px;
+  background: #1a1a1f;
+  border: 4px solid #1a1a1f;
+  border-radius: 4px;
+  width: min(40vh, 300px);
+  aspect-ratio: 1 / 2;
+}
+
+.cell {
+  background: #2a2a32;
+  border-radius: 2px;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: rgba(10, 10, 14, 0.85);
+  border-radius: 4px;
+  padding: 16px;
+  text-align: center;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 160px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.05);
 }
