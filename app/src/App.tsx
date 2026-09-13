@@ -27,6 +27,7 @@ function App() {
   const [lines, setLines] = useState(0)
   const [isGameOver, setIsGameOver] = useState(false)
   const [isRunning, setIsRunning] = useState(false)
+  const [isPaused, setIsPaused] = useState(false)
 
   const boardRef = useRef(board)
   const pieceRef = useRef(piece)
@@ -108,17 +109,28 @@ function App() {
     setLines(0)
     setIsGameOver(false)
     setIsRunning(true)
+    setIsPaused(false)
+  }, [])
+
+  const togglePause = useCallback(() => {
+    setIsPaused((p) => !p)
   }, [])
 
   useEffect(() => {
-    if (!isRunning) return
+    if (!isRunning || isPaused) return
     const id = setInterval(softDrop, TICK_MS)
     return () => clearInterval(id)
-  }, [isRunning, softDrop])
+  }, [isRunning, isPaused, softDrop])
 
   useEffect(() => {
     if (!isRunning) return
     const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'p' || e.key === 'P') {
+        e.preventDefault()
+        togglePause()
+        return
+      }
+      if (isPaused) return
       switch (e.key) {
         case 'ArrowLeft':
           e.preventDefault()
@@ -144,7 +156,7 @@ function App() {
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [isRunning, tryMove, softDrop, rotate, hardDrop])
+  }, [isRunning, isPaused, tryMove, softDrop, rotate, hardDrop, togglePause])
 
   const activeCells = new Set(
     pieceCells(piece)
@@ -189,6 +201,13 @@ function App() {
               <PButton onClick={restart}>{isGameOver ? 'Play again' : 'Start'}</PButton>
             </div>
           )}
+
+          {isRunning && isPaused && (
+            <div className="overlay">
+              <PHeading size="large">Paused</PHeading>
+              <PButton onClick={togglePause}>Resume</PButton>
+            </div>
+          )}
         </div>
 
         <aside className="sidebar">
@@ -210,11 +229,16 @@ function App() {
             </PText>
             <PTag>{nextType}</PTag>
           </div>
+          {isRunning && !isGameOver && (
+            <PButton variant="secondary" onClick={togglePause}>
+              {isPaused ? 'Resume' : 'Pause'}
+            </PButton>
+          )}
           <PButton variant="secondary" onClick={restart}>
             Restart
           </PButton>
           <PText size="x-small">
-            Arrow keys to move/rotate, Space to hard drop
+            Arrow keys to move/rotate, Space to hard drop, P to pause
           </PText>
         </aside>
       </div>
