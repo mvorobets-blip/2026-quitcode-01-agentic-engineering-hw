@@ -7,7 +7,12 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "test": "node --test src/*.test.ts",
+    "test:mutants": "node scripts/mutation-check.mjs",
     "preview": "vite preview"
+  },
+  "engines": {
+    "node": ">=22.18"
   },
   "dependencies": {
     "@porsche-design-system/components-react": "^4.7.0",
