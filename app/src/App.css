@@ -58,3 +58,14 @@
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.05);
 }
+
+.preview {
+  display: grid;
+  grid-template-columns: repeat(4, 16px);
+  grid-template-rows: repeat(2, 16px);
+  gap: 1px;
+  padding: 4px;
+  width: max-content;
+  background: #1a1a1f;
+  border-radius: 4px;
+}
