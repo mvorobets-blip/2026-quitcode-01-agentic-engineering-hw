@@ -33,7 +33,8 @@ const MUTANTS = [
 ]
 
 function runTests(dir, testFile) {
-  const r = spawnSync(process.execPath, ['--test', join(dir, testFile)], { encoding: 'utf8' })
+  // Explicit spec reporter: with piped stdout Node 22 defaults to TAP, which the parser below does not read.
+  const r = spawnSync(process.execPath, ['--test', '--test-reporter=spec', join(dir, testFile)], { encoding: 'utf8' })
   const count = (k) => Number((r.stdout.match(new RegExp(`^ℹ ${k} (\\d+)`, 'm')) ?? [])[1] ?? NaN)
   return { pass: count('pass'), fail: count('fail') }
 }

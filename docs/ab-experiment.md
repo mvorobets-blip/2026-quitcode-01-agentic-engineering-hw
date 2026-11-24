@@ -51,10 +51,10 @@ One run per prompt — an observation, not statistics. Full prompts, diffs and t
 |---|---|---|
 | Turns | 15 | 10 |
 | Tool calls | 14 | 9 |
-| — reading the code | 4 (1 grep + 3 Read) | 1 (one `cat` of 3 files) + 1 Read later |
-| — editing | 7 Edit | 6 (5 Edit + 1 append to CSS) |
+| — reading the code | 4 (1 grep + 3 Read) | 2 (one `cat` of 3 files + 1 Read) |
+| — editing (successful) | 7 Edit | 5 Edit |
 | — build | 1 | 1 |
-| — `git commit` attempts (refused: git was not allowed) | 2 | 0 |
+| — refused commands (not in the allowed list) | 2 (`git commit`) | 1 (append CSS + `npx tsx` check in one command; CSS then added by an Edit) |
 | Output tokens | 4 154 | 3 954 |
 | Cache read / cache write | 324 381 / 33 144 | 219 490 / 30 945 |
 | Cost | $0.413 | $0.371 |
@@ -76,16 +76,21 @@ One run per prompt — an observation, not statistics. Full prompts, diffs and t
 
 Both prompts produced a working preview: for a small, familiar UI task the basic prompt is not
 "broken". The clear gain from the structured prompt is **quality**: it asked for, and got, a fixed
-4×2 grid with the same cells as the board (what the final app uses) and a proper accessible name
-(`role="img"` + `aria-label`). A left both to chance and got neither.
+4×2 grid with the same cells as the board (what the final app uses); A left that to chance and got a
+grid that changes size per piece. On accessibility, B's prompt only required an `aria-label`. A also
+added one. B's `role="img"`, which makes screen readers announce that label, was a bonus of this
+particular run, not something the prompt guaranteed. A re-run would need "`role="img"`" in the
+criteria to be sure of it.
 
 The **efficiency** difference is smaller than the turn count suggests. B used 5 fewer tool calls, but
-2 of A's were `git commit` attempts: A followed the "commit after each iteration" rule in `AGENTS.md`,
-while B's prompt ended with "stop" and suppressed that step. Of the rest, A spent 3 more calls reading
-the code to find the scope that B's prompt named directly. Cost was ~10 % lower for B ($0.371 vs
-$0.413), and wall time was about the same (B 1 s slower). With one run per prompt, these
-differences are within what a re-run could change; the quality difference is not, because it comes
-straight from B's acceptance criteria.
+2 of A's were refused `git commit` attempts: A followed the "commit after each iteration" rule in
+`AGENTS.md`, while B's prompt ended with "stop" and suppressed that step (B had its own refused
+command, so refused calls are 2 vs 1). A spent 2 more calls reading the code to find the scope that
+B's prompt named directly, and 2 more on edits. Tokens: B used ~5 % fewer output tokens (3 954 vs
+4 154) and ~32 % less cache read (219k vs 324k). Cost was ~10 % lower for B ($0.371 vs $0.413), and
+wall time was about the same (B 1 s slower). With one run per prompt, these differences are within
+what a re-run could change; the grid difference is not, because it comes straight from B's
+acceptance criteria.
 
 **My take:** I agree with this result — the structured prompt is worth it for the quality it pins
 down, not for speed.
