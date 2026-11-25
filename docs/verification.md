@@ -18,6 +18,9 @@ one piece later), centred spawn, purity of every transition, and same-seed repla
 
 `scripts/mutation-check.mjs` does two things without touching `src/`:
 
+> Needs the full git history (the baseline reads commit `b2b1b5b`). In a shallow clone run `git fetch --unshallow`
+> first; without it the script stops with that hint (exit code 2).
+
 - **Red baseline.** `src/tetris.test.ts` cannot run against the submitted code (`b2b1b5b`):
   `newGame` and `lockPiece` did not exist yet, so it would fail on import, which proves nothing.
   Instead, `scripts/baseline-original.test.ts` checks two review points using only functions
@@ -65,6 +68,11 @@ No errors in the console.
 
 After **Start** / **Restart** the button loses focus, so pressing Enter during play no longer
 restarts the game.
+
+Space on a focused button presses the button instead of hard-dropping (`src/keys.ts`, tests in
+`src/keys.test.ts`; full CodeRabbit review 25.11). Checked with real key presses: Pause clicked, then
+Space with focus on «Resume» — the game resumed and the piece stayed near the top; Space with no focused
+button still hard-drops the piece to the bottom row.
 
 ## 4. Porsche Design System styles really render
 

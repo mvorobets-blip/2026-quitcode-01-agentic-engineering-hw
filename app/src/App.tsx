@@ -14,6 +14,7 @@ import {
   type GameState,
   type PieceType,
 } from './tetris'
+import { isGameKey } from './keys'
 import './App.css'
 
 const TICK_MS = 700
@@ -109,7 +110,8 @@ function App() {
         ' ': () => dispatch({ type: 'hard-drop' }),
       }
       const handler = keys[e.key]
-      if (!handler) return
+      // Space на Pause / Resume — натискання кнопки, не hard drop (і без preventDefault, щоб кнопка спрацювала).
+      if (!handler || !isGameKey(e.key, e.composedPath() as Element[])) return
       e.preventDefault()
       handler()
     }

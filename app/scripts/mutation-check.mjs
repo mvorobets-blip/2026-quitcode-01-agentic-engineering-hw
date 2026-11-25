@@ -51,7 +51,15 @@ function inTemp(tetrisSource, testSrcPath, testName) {
 }
 
 let ok = true
-const original = execFileSync('git', ['show', 'b2b1b5b:app/src/tetris.ts'], { encoding: 'utf8' })
+// Базова ревізія потрібна в історії: у неглибокому клоні (--depth) чи архіві її немає — тоді зрозуміла помилка,
+// а не стек execFileSync (повне рев'ю CodeRabbit 25.11).
+let original
+try {
+  original = execFileSync('git', ['show', 'b2b1b5b:app/src/tetris.ts'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] })
+} catch {
+  console.error('mutation-check: commit b2b1b5b (the submitted code) is not in this clone. Run `git fetch --unshallow` (or clone without --depth) and try again.')
+  process.exit(2)
+}
 const base = inTemp(original, 'scripts/baseline-original.test.ts', 'baseline.test.ts')
 console.log(`0. original code (b2b1b5b), baseline tests: ${base.fail} failed, ${base.pass} passed → ${base.fail > 0 ? 'RED as expected' : 'NOT RED'}`)
 ok &&= base.fail > 0
